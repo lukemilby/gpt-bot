@@ -16,7 +16,7 @@ don't already have one.
 ```angular2html
 export GPTKEY=<openai key>
 export DISCORD_KEY=<discord bot token>
-    pip install -r requirements.txt
+pip install -r requirements.txt
 python main.py
 ```
 
