@@ -19,3 +19,7 @@ export DISCORD_KEY=<discord bot token>
     pip install -r requirements.txt
 python main.py
 ```
+
+### Usage
+
+![](usage.png)
