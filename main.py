@@ -31,12 +31,6 @@ async def models(interaction: discord.Interaction):
 
 @bot.tree.command(name="prompt")
 @app_commands.describe(message="Message for OpenAI GPT")
-# @app_commands.describe(model="Select a model to use")
-# @app_commands.Choice(model=[
-#     discord.app_commands.Choice(model="davinci", value="text-davinci-003"),
-#     discord.app_commands.Choice(model="babbage", value=1),
-#     discord.app_commands.Choice(model="jules", value=1),
-# ])
 async def prompt(interaction: discord.Interaction, message:str):
     try:
         await interaction.response.defer()
