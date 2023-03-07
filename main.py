@@ -1,6 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
+import asyncio
 import os
 import openai
 
@@ -23,21 +24,38 @@ async def on_ready():
 async def hello(interaction: discord.Interaction):
     await interaction.response.send_message("Hello", ephemeral=True)
 
+@bot.tree.command(name="models")
+async def models(interaction: discord.Interaction):
+    response = openai.Model.list()
+    print(response)
+
 @bot.tree.command(name="prompt")
 @app_commands.describe(message="Message for OpenAI GPT")
+# @app_commands.describe(model="Select a model to use")
+# @app_commands.Choice(model=[
+#     discord.app_commands.Choice(model="davinci", value="text-davinci-003"),
+#     discord.app_commands.Choice(model="babbage", value=1),
+#     discord.app_commands.Choice(model="jules", value=1),
+# ])
 async def prompt(interaction: discord.Interaction, message:str):
-    response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=message,
-        max_tokens=2048,
-        temperature=0.9,
-        top_p=1,
-    )
-    embed = discord.Embed(title="Response", url="",
-                          description=f"{response['choices'][0]['text']}",
-                          color=discord.Color.blue())
-
-    await interaction.response.send_message(f"{interaction.user.mention}: {message}", embed=embed)
+    try:
+        await interaction.response.defer()
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "you are a helpful assistant"},
+                {"role": "user", "content": message}
+            ],
+        )
+        print(response)
+        embed = discord.Embed(title="Response", url="",
+                              description=f"{response['choices'][0]['message']['content']}",
+                              color=discord.Color.blue())
+        await asyncio.sleep(4)
+        await interaction.followup.send(f"{interaction.user.mention}: {message}", embed=embed)
+    except Exception as e:
+        print(e)
+        await interaction.followup.send("There seems to be an issue with Open AI, please contact one of the Discord Admins", ephemeral=True)
 
 @bot.event
 async def on_message(message):
